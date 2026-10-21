@@ -1,0 +1,14 @@
+import {withTimeout} from './abort';
+import {serviceFetch} from './transport';
+import {z} from 'zod';
+export type SearchConfig={provider:'none'|'builtin'|'deepseek';baseUrl:string;fetchPages:boolean};
+export const defaultSearch:SearchConfig={provider:'none',baseUrl:'https://api.deepseek.com',fetchPages:true};
+const pageSchema=z.object({title:z.string(),url:z.string().url(),snippet:z.string(),summary:z.string(),content:z.string(),date:z.string().nullable()});
+export type SearchPage=z.infer<typeof pageSchema>;
+export function searchUrl(base:string,method:'search'|'fetch'){const u=new URL(base);if(u.protocol!=='https:'&&!(u.protocol==='http:'&&['localhost','127.0.0.1'].includes(u.hostname)))throw new Error('搜索 Base URL 需要 HTTPS');if(u.username||u.password||u.search||u.hash)throw new Error('搜索地址不能含凭据或查询参数');return u.toString().replace(/\/$/,'').replace(/\/v1$/,'')+'/v1/tools/'+method;}
+function publicUrl(value:string){try{const u=new URL(value);return ['http:','https:'].includes(u.protocol)&&!u.username&&!u.password&&!['localhost','127.0.0.1','[::1]'].includes(u.hostname)&&!u.hostname.endsWith('.local')&&!/^10\.|^192\.168\.|^172\.(1[6-9]|2\d|3[01])\./.test(u.hostname);}catch{return false;}}
+async function call(config:SearchConfig,key:string,method:'search'|'fetch',body:unknown,signal?:AbortSignal){if(!key.trim())throw new Error('请填写搜索服务 API Key');const response=await serviceFetch(searchUrl(config.baseUrl,method),{method:'POST',headers:{Authorization:`Bearer ${key.trim()}`,'Content-Type':'application/json'},body:JSON.stringify(body),redirect:'error',signal:withTimeout(45000,signal)});if(!response.ok)throw new Error(`DeepSeek ${method} 失败（${response.status}），请检查密钥、余额、权限与网络`);return response.json();}
+export async function searchWeb(config:SearchConfig,key:string,query:string,signal?:AbortSignal){if(!query.trim()||Array.from(query).length>128)throw new Error('搜索词需为 1–128 个字符');const raw=await call(config,key,'search',{query:query.trim(),count:5,need_content:false},signal);return z.object({results:z.array(pageSchema)}).parse(raw).results.filter(p=>publicUrl(p.url));}
+export async function fetchPage(config:SearchConfig,key:string,url:string,signal?:AbortSignal){if(!publicUrl(url)||url.length>8192)throw new Error('只支持不含凭据的公开网页地址');return z.object({title:z.string(),content:z.string()}).parse(await call(config,key,'fetch',{url},signal));}
+export async function collectEvidence(config:SearchConfig,key:string,query:string,signal?:AbortSignal){const pages=await searchWeb(config,key,query,signal);if(!pages.length)throw new Error('搜索无结果，请调整关键词；未生成市场分析');const warnings:string[]=[];if(config.fetchPages)for(const p of pages.slice(0,2)){try{const full=await fetchPage(config,key,p.url,signal);p.content=full.content.slice(0,16000);}catch(e){if(signal?.aborted)throw e;warnings.push(`${p.title}：正文抓取失败，仅使用摘要`);}}return {pages,warnings,retrievedAt:new Date().toISOString()};}
+export type Evidence=Awaited<ReturnType<typeof collectEvidence>>;

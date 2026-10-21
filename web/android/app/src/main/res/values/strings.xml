@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">知衡</string>
+    <string name="title_activity_main">知衡</string>
+    <string name="package_name">app.zhiheng.assets</string>
+    <string name="custom_url_scheme">app.zhiheng.assets</string>
+</resources>

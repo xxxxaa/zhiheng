@@ -1,0 +1,44 @@
+name: Android checks
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: android-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: web/package-lock.json
+      - uses: actions/setup-java@cf277c60eb25467037889841efdb72551f06f6c3 # v4
+        with:
+          distribution: temurin
+          java-version: '21'
+      - name: Install dependencies
+        working-directory: web
+        run: npm ci
+      - name: Unit tests
+        working-directory: web
+        run: npm test
+      - name: Bundle Android assets
+        working-directory: web
+        run: npm run build && npx cap sync android
+      - name: Install Android SDK packages
+        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+      - name: Verify Android compilation
+        working-directory: web/android
+        run: ./gradlew assembleRelease --no-daemon --console=plain
+      # Signing keys remain local. Never distribute CI-generated debug-signed packages.
