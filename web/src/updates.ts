@@ -4,6 +4,7 @@ import {serviceFetch} from './transport';
 export const UPDATE_REPO = 'xxxxaa/zhiheng';
 export const RELEASES_URL = `https://github.com/${UPDATE_REPO}/releases`;
 export const UPDATE_API = `https://api.github.com/repos/${UPDATE_REPO}/releases/latest`;
+export const UPDATE_MANIFEST = `https://raw.githubusercontent.com/${UPDATE_REPO}/main/release/latest.json`;
 // Public certificate fingerprint, never the signing key. Retain the existing install's identity.
 export const SIGNER_SHA256 = '0fb97ee5bf50a79946ee75f337bcc42b5f29471174473dd8c63718e459f0fa2b';
 export const UPDATE_INTERVAL = 24 * 60 * 60 * 1000;
@@ -65,8 +66,9 @@ export async function fetchRelease(): Promise<AppRelease | null> {
   const controller = new AbortController();
   const timer = setTimeout(() => controller.abort(new Error('检查更新超时，请稍后重试')), 20000);
   try {
-    const response = await serviceFetch(UPDATE_API, {signal: controller.signal, credentials: 'omit',
-      headers: {Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28'}});
+    // Public static metadata avoids GitHub REST's shared-IP anonymous rate limit.
+    let response = await serviceFetch(UPDATE_MANIFEST, {signal:controller.signal,credentials:'omit',headers:{Accept:'application/json','Cache-Control':'no-cache'}});
+    if(response.status===404)response=await serviceFetch(UPDATE_API,{signal:controller.signal,credentials:'omit',headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}});
     if (response.status === 404) return null;
     if (response.status === 403 || response.status === 429) throw new Error('GitHub 暂时限制请求，请稍后重试或打开发布页');
     if (!response.ok) throw new Error(`检查更新失败（${response.status}）`);

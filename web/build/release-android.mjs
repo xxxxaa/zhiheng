@@ -29,6 +29,8 @@ if(publish||publishOnly){
   if(output('git',['status','--porcelain']))throw Error('Commit all source changes before publishing');
   const remote=output('git',['remote','get-url','origin']);
   if(![`https://github.com/${config.repository}.git`,`git@github.com:${config.repository}.git`].includes(remote))throw Error('Unexpected GitHub remote');
+  const recent=JSON.parse(output('gh',['api',`repos/${config.repository}/releases?per_page=100`]));
+  if(recent.some(item=>item.tag_name===tag))throw Error('A published release or draft already exists; inspect it before retrying');
   const releaseQuery=spawnSync('gh',['api',`repos/${config.repository}/releases/tags/${tag}`],{cwd:root,env,encoding:'utf8'});
   if(releaseQuery.status===0)throw Error('This release already exists; never overwrite a published APK');
   if(!releaseQuery.stderr?.includes('HTTP 404'))throw Error('Cannot verify existing GitHub release');
@@ -70,9 +72,20 @@ if(publish||publishOnly){
   if(existing.status!==0)run('git',['tag','-a',tag,'-m',`知衡 ${tag}`]);
   run('git',['push','origin','HEAD:main',`refs/tags/${tag}`]);
   run('gh',['release','create',tag,'--repo',config.repository,'--verify-tag','--draft','--title',`知衡 ${tag}`,'--notes-file',body,apk,checksums]);
-  const release=JSON.parse(output('gh',['api',`repos/${config.repository}/releases/tags/${tag}`]));
+  // GitHub's by-tag endpoint excludes drafts, even when the caller created the draft.
+  const drafts=JSON.parse(output('gh',['api',`repos/${config.repository}/releases?per_page=100`])).filter(item=>item.tag_name===tag&&item.draft);
+  if(drafts.length!==1)throw Error('Cannot identify the uploaded draft; inspect it before retrying');
+  const release=drafts[0];
   const remoteAsset=release.assets.find(item=>item.name===asset);
   if(!remoteAsset||remoteAsset.digest!==`sha256:${sha256}`)throw Error('Uploaded APK digest mismatch; release left as draft for inspection');
   run('gh',['release','edit',tag,'--repo',config.repository,'--draft=false','--latest']);
+  const published=JSON.parse(output('gh',['api',`repos/${config.repository}/releases/tags/${tag}`]));
+  if(published.draft||published.tag_name!==tag)throw Error('Published release could not be verified');
+  const manifest={tag_name:published.tag_name,html_url:published.html_url,body:published.body,draft:false,prerelease:false,published_at:published.published_at,
+    assets:published.assets.filter(item=>item.name===asset).map(item=>({name:item.name,browser_download_url:item.browser_download_url,state:item.state,size:item.size,digest:item.digest}))};
+  fs.writeFileSync(path.join(root,'release/latest.json'),JSON.stringify(manifest,null,2)+'\n');
+  run('git',['add','release/latest.json']);
+  run('git',['commit','-m',`Update public Android manifest for ${tag}`]);
+  run('git',['push','origin','HEAD:main']);
   console.log(`Published https://github.com/${config.repository}/releases/tag/${tag}`);
 }
