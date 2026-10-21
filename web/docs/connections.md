@@ -2,7 +2,13 @@
 
 ## 模型
 
-支持 Chat Completions 与 Responses。Base URL 按供应商需要包含 /v1，App 追加 /chat/completions 或 /responses。填写实际支持的模型名。
+从 0.1.4 起，在“偏好与连接 → AI 模型连接”选择“DeepSeek 官方”，填写自己的 API Key，然后在下拉框选择 Flash 或 V4 Pro，点击“保存模型设置”。新安装默认使用 DeepSeek Flash；已有连接保留。思考强度可选关闭、low、high、max，默认 high；仅对官方 DeepSeek 地址附加对应参数。
+
+“刷新可用模型”使用当前密钥向 `https://api.deepseek.com/models` 发出 GET，只获取模型列表，不发送资产或对话。获取失败保留原选择与内置列表，也可手动填写新模型 ID。保存本身不调用模型；下次分析和报告记录使用已保存的模型。模型选择不会自动开启搜索；从 Responses 切换到 Chat 时会关闭不兼容的内置搜索，可另行配置独立搜索。
+
+2026-10-21 核对的官方模型 ID 为 `deepseek-flash` 与 `deepseek-v4-pro`。参考：[模型与价格](https://api-docs.deepseek.com/zh-cn/quick_start/pricing/)、[模型列表](https://api-docs.deepseek.com/zh-cn/api/list-models/)、[思考模式](https://api-docs.deepseek.com/zh-cn/guides/thinking_mode/)。模型可用性以账户实际返回为准。
+
+“自定义兼容服务”仍支持 Chat Completions 与 Responses。Base URL 按供应商需要包含 /v1，App 追加 /chat/completions 或 /responses，模型名自行填写。切换到 DeepSeek 官方时，如果原地址属于其他服务，会清空当前会话中的模型密钥，避免误用。
 
 安装版通过原生 HTTPS 请求直连该地址，无浏览器 CORS 要求；浏览器预览服务需允许带 Authorization、Content-Type 的 CORS。使用 HTTPS，本机 localhost / 127.0.0.1 可用 HTTP。不跟随重定向，不接受 URL 账号密码。
 
