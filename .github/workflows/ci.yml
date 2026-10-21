@@ -38,7 +38,7 @@ jobs:
         run: npm run build && npx cap sync android
       - name: Install Android SDK packages
         run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0"' 
-      - name: Verify Android compilation
+      - name: Verify Android download engine and compilation
         working-directory: web/android
-        run: ./gradlew assembleRelease --no-daemon --console=plain
+        run: ./gradlew testDebugUnitTest assembleRelease --no-daemon --console=plain
       # Signing keys remain local. Never distribute CI-generated debug-signed packages.

@@ -9,6 +9,7 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onCreate(Bundle state) {
         registerPlugin(FileExportPlugin.class);
+        registerPlugin(AppUpdaterPlugin.class);
         super.onCreate(state);
         EdgeToEdge.enable(this);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE);

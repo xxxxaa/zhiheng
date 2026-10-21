@@ -42,7 +42,7 @@ if(!publishOnly){
   env.ZHIHENG_STORE_PASSWORD=env.ANDROID_SIGNING_STORE_PASSWORD||'android';
   env.ZHIHENG_KEY_PASSWORD=env.ANDROID_SIGNING_KEY_PASSWORD||'android';
   run('npm',['test'],web);run('npm',['run','mobile:sync'],web);
-  run(env.GRADLE_BIN||path.join(web,'android/gradlew'),['-p',path.join(web,'android'),'assembleRelease','--no-daemon','--console=plain']);
+  run(env.GRADLE_BIN||path.join(web,'android/gradlew'),['-p',path.join(web,'android'),'testDebugUnitTest','assembleRelease','--no-daemon','--console=plain']);
   const unsigned=path.join(web,'android/app/build/outputs/apk/release/app-release-unsigned.apk');
   const aligned=path.join(artifactDir,`.${asset}.aligned`);
   try{
@@ -57,9 +57,13 @@ if(!cert.includes(`certificate SHA-256 digest: ${config.signerSha256}`))throw Er
 const badging=output(tool('aapt'),['dump','badging',apk]);
 if(!badging.includes(`name='${config.appId}' versionCode='${config.versionCode}' versionName='${config.version}'`)||!badging.includes(`sdkVersion:'${config.minSdk}'`)||badging.includes('application-debuggable'))throw Error('APK identity/version/system requirement or release build check failed');
 const sha256=crypto.createHash('sha256').update(fs.readFileSync(apk)).digest('hex');
+// ZIP is a bootstrap alternative for browsers that stall while finalizing an APK download.
+const zip=path.join(artifactDir,asset.replace(/\.apk$/,'.zip'));
+fs.rmSync(zip,{force:true});run('zip',['-j','-q',zip,apk]);
+const zipSha256=crypto.createHash('sha256').update(fs.readFileSync(zip)).digest('hex');
 const meta={schema:1,appId:config.appId,version:config.version,versionCode:config.versionCode,minSdk:config.minSdk,asset,sha256,signerSha256:config.signerSha256};
 const checksums=path.join(artifactDir,'SHA256SUMS.txt');
-fs.writeFileSync(checksums,`${sha256}  ${asset}\n`);
+fs.writeFileSync(checksums,`${sha256}  ${asset}\n${zipSha256}  ${path.basename(zip)}\n`);
 const body=path.join(artifactDir,`release-${tag}.md`);
 fs.writeFileSync(body,`${notes.trim()}\n\n<!-- zhiheng-update:v1\n${JSON.stringify(meta)}\n-->\n`);
 console.log(JSON.stringify({apk,sha256,versionCode:config.versionCode},null,2));
@@ -71,13 +75,15 @@ if(publish||publishOnly){
   if(existing.status===0&&existing.stdout.trim()!==head)throw Error('Tag points to another commit');
   if(existing.status!==0)run('git',['tag','-a',tag,'-m',`知衡 ${tag}`]);
   run('git',['push','origin','HEAD:main',`refs/tags/${tag}`]);
-  run('gh',['release','create',tag,'--repo',config.repository,'--verify-tag','--draft','--title',`知衡 ${tag}`,'--notes-file',body,apk,checksums]);
+  run('gh',['release','create',tag,'--repo',config.repository,'--verify-tag','--draft','--title',`知衡 ${tag}`,'--notes-file',body,apk,zip,checksums]);
   // GitHub's by-tag endpoint excludes drafts, even when the caller created the draft.
   const drafts=JSON.parse(output('gh',['api',`repos/${config.repository}/releases?per_page=100`])).filter(item=>item.tag_name===tag&&item.draft);
   if(drafts.length!==1)throw Error('Cannot identify the uploaded draft; inspect it before retrying');
   const release=drafts[0];
   const remoteAsset=release.assets.find(item=>item.name===asset);
   if(!remoteAsset||remoteAsset.digest!==`sha256:${sha256}`)throw Error('Uploaded APK digest mismatch; release left as draft for inspection');
+  const remoteZip=release.assets.find(item=>item.name===path.basename(zip));
+  if(!remoteZip||remoteZip.digest!==`sha256:${zipSha256}`)throw Error('Uploaded ZIP digest mismatch; release left as draft for inspection');
   run('gh',['release','edit',tag,'--repo',config.repository,'--draft=false','--latest']);
   const published=JSON.parse(output('gh',['api',`repos/${config.repository}/releases/tags/${tag}`]));
   if(published.draft||published.tag_name!==tag)throw Error('Published release could not be verified');
