@@ -1,17 +1,17 @@
 {
-  "tag_name": "v0.1.4",
-  "html_url": "https://github.com/xxxxaa/zhiheng/releases/tag/v0.1.4",
-  "body": "# 知衡 0.1.4\n\n- 新增 DeepSeek 官方连接预设，自动配置地址与协议。\n- 下拉选择 DeepSeek Flash / V4 Pro，可使用自己的 API Key 刷新可用模型，也支持手动填写模型 ID。\n- 新增思考强度设置，保存后下次分析使用所选模型；刷新列表不发送账本。\n- 新安装默认使用 DeepSeek Flash，已有自定义连接保留。选择模型不会自动开启联网搜索。\n- 延续现有签名，直接覆盖安装，保留账本和设备锁。\n\n使用路径：偏好与连接 → AI 模型连接 → DeepSeek 官方 → 填写 API Key → 选择模型 → 保存模型设置。实际鉴权调用需要你的 DeepSeek API Key 和可用账户额度。\n\n<!-- zhiheng-update:v1\n{\"schema\":1,\"appId\":\"app.zhiheng.assets\",\"version\":\"0.1.4\",\"versionCode\":5,\"minSdk\":24,\"asset\":\"zhiheng-0.1.4-android.apk\",\"sha256\":\"a306ad81fdd52548b6fb2b17bedeed4ddb7f2d38c6dbf924baf0983475796e67\",\"signerSha256\":\"0fb97ee5bf50a79946ee75f337bcc42b5f29471174473dd8c63718e459f0fa2b\"}\n-->\n",
+  "tag_name": "v0.1.5",
+  "html_url": "https://github.com/xxxxaa/zhiheng/releases/tag/v0.1.5",
+  "body": "# 知衡 0.1.5\n\n- 更新改为 App 内原生下载，显示实际进度与字节数，支持取消和重试。\n- 连接/传输 15 秒无响应会明确报错，总下载时限 3 分钟，避免无限等待。\n- 下载完成后校验大小、SHA-256、应用身份、版本和签名；通过后才显示“安装更新”。\n- 已校验安装包保存在 App 内，重启后可继续安装，无需寻找浏览器下载文件。\n- Android 系统确认覆盖安装，首次可能需要允许知衡发起安装；保留账本、模型设置与设备锁。\n- 提供备用 ZIP，内容为同一签名的 APK，便于旧版绕过浏览器 APK 下载收尾问题。\n\n**从旧版升级这一次：** 如果 APK 下载卡住，请下载 `zhiheng-0.1.5-android.zip`，解压后打开其中的 APK 覆盖安装，不要先卸载。以后可直接在知衡“偏好与连接 → 应用更新”中下载并安装。\n\n<!-- zhiheng-update:v1\n{\"schema\":1,\"appId\":\"app.zhiheng.assets\",\"version\":\"0.1.5\",\"versionCode\":6,\"minSdk\":24,\"asset\":\"zhiheng-0.1.5-android.apk\",\"sha256\":\"2c1b2aad2296fd2252e80252010a14f408556aba0c3b4b3b332264963e996290\",\"signerSha256\":\"0fb97ee5bf50a79946ee75f337bcc42b5f29471174473dd8c63718e459f0fa2b\"}\n-->\n",
   "draft": false,
   "prerelease": false,
-  "published_at": "2026-10-21T13:02:55Z",
+  "published_at": "2026-10-21T13:27:37Z",
   "assets": [
     {
-      "name": "zhiheng-0.1.4-android.apk",
-      "browser_download_url": "https://github.com/xxxxaa/zhiheng/releases/download/v0.1.4/zhiheng-0.1.4-android.apk",
+      "name": "zhiheng-0.1.5-android.apk",
+      "browser_download_url": "https://github.com/xxxxaa/zhiheng/releases/download/v0.1.5/zhiheng-0.1.5-android.apk",
       "state": "uploaded",
-      "size": 6120916,
-      "digest": "sha256:a306ad81fdd52548b6fb2b17bedeed4ddb7f2d38c6dbf924baf0983475796e67"
+      "size": 6133204,
+      "digest": "sha256:2c1b2aad2296fd2252e80252010a14f408556aba0c3b4b3b332264963e996290"
     }
   ]
 }
