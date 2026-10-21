@@ -37,7 +37,7 @@ jobs:
         working-directory: web
         run: npm run build && npx cap sync android
       - name: Install Android SDK packages
-        run: sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
+        run: '"$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" "platforms;android-36" "build-tools;36.0.0"' 
       - name: Verify Android compilation
         working-directory: web/android
         run: ./gradlew assembleRelease --no-daemon --console=plain
