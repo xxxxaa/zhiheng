@@ -13,6 +13,7 @@ export function UpdatePanel() {
   const state = useUpdates();
   if (!state.supported) return null;
   return <Panel title="应用更新" subtitle="从知衡的 GitHub 发布页获取新版">
+    {state.version&&<p>当前安装版本：{state.version}</p>}
     <div className="button-row"><button className="secondary" disabled={state.checking} onClick={()=>void checkForUpdates()}><RefreshCw size={16}/>{state.checking?'正在检查…':'检查更新'}</button><a className="text-button" href={RELEASES_URL} target="_blank" rel="noreferrer">发布页 <ExternalLink size={15}/></a></div>
     <p role="status">{state.checking?'正在连接 GitHub…':state.error||state.message||'可手动检查是否有新版。'}</p>
     {state.checkedAt>0&&<p className="muted">最近成功检查：{new Date(state.checkedAt).toLocaleString('zh-CN')}</p>}

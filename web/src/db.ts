@@ -14,6 +14,7 @@ export async function removePosition(id:string){await db.transaction('rw',[db.po
 export async function removeAccount(id:string){await db.transaction('rw',[db.accounts,db.positions],async()=>{if(await db.positions.where('accountId').equals(id).count())throw new Error('请先移出或删除这个账户内的资产');await db.accounts.delete(id);});}
 export async function restoreData(input:unknown){const b=bundleSchema.parse(input);await db.transaction('rw',[db.accounts,db.positions,db.snapshots,db.reports,db.meta],async()=>{
   const before=await exportData();await setMeta('beforeRestore',before);
+  await db.meta.delete('quoteRecords');await db.meta.delete('quoteSyncStatus');await setMeta('ledgerRevision',crypto.randomUUID());
   await db.accounts.clear();await db.positions.clear();await db.snapshots.clear();await db.reports.clear();
   await db.accounts.bulkPut(b.accounts);await db.positions.bulkPut(b.positions);await db.snapshots.bulkPut(b.snapshots);await db.reports.bulkPut(b.reports);await setMeta('profile',b.profile);
 });}

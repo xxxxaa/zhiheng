@@ -2,13 +2,13 @@
 
 当前主要交付 Android 安装包，iOS 工程保留供自行签名构建。
 
-交付形式：复用现有 React 界面，使用 Capacitor 8 打包。App ID 为 `app.zhiheng.assets`，Android 版本 0.1.3（versionCode 4）；已有 iOS 构建仍为 0.1.0。页面资源包含在安装包内，无 `server.url`，不依赖 Sites、域名或业务服务端。
+交付形式：复用现有 React 界面，使用 Capacitor 8 打包。App ID 为 `app.zhiheng.assets`，Android 版本 0.1.6（versionCode 7）；已有 iOS 构建仍为 0.1.0。页面资源包含在安装包内，无 `server.url`，不依赖 Sites、域名或业务服务端。
 
 ## 安卓首次安装
 
 APK 最低 Android 7（API 24）、目标 API 36，无按 CPU 架构区分的 `.so` 库。Android 15 模拟器已验证系统 PIN、文件保存与加密恢复；厂商定制系统和真实指纹需在目标手机上验证。
 
-1. 从 [GitHub Releases](https://github.com/xxxxaa/zhiheng/releases/latest) 下载 `zhiheng-0.1.3-android.apk`，在系统文件管理器中打开。
+1. 下载 [Android 0.1.6 ZIP 安装包](https://github.com/xxxxaa/zhiheng/releases/download/v0.1.6/zhiheng-0.1.6-android.zip)，在系统文件管理器中解压并打开其中的 APK。ZIP 可用于浏览器卡在 APK 下载收尾时的首次覆盖升级。
 2. 按系统安装器提示，为打开 APK 的来源授予本次安装所需权限，再安装“知衡”。不需要 Sites、浏览器添加到主屏幕或 Apple 签名。
 3. 首次打开添加一个测试账户和一条合成现金记录，关闭再打开，确认记录保留。
 4. 在“偏好与连接”测试系统解锁；在“数据备份”测试加密文件导出和重新选择文件恢复。真实云备份需在 App 内配置自己的 S3。
@@ -17,11 +17,11 @@ APK 最低 Android 7（API 24）、目标 API 36，无按 CPU 架构区分的 `.
 
 ## 应用更新
 
-0.1.3 起可在“偏好与连接 → 应用更新”检查和下载新版；自动检查每天最多一次，可关闭。GitHub 无法连接时不会阻塞本机账本。下载由浏览器处理，安装需用户在系统中确认。旧版需先手动安装 0.1.3。
+在“偏好与连接 → 应用更新”检查新版；自动检查每天最多一次，可关闭。0.1.5 起可在 App 内下载，显示进度、取消和重试，校验完成后由用户确认安装。0.1.6 显示当前安装版本、直接提供 ZIP 备用按钮并重新获取版本清单。GitHub 无法连接时不会阻塞本机账本。0.1.4 及更早版本需先用 ZIP 手动完成这一次覆盖升级。
 
 ## 安装和迁移
 
-- Android：使用本项目生成的 `zhiheng-0.1.3-android.apk`。这是测试签名版本，不是应用商店正式发行包。覆盖安装可保留数据；不要先卸载旧版。首次安装时按 Android 提示允许该文件来源安装。
+- Android：使用本项目生成的 `zhiheng-0.1.6-android.apk`。这是测试签名版本，不是应用商店正式发行包。覆盖安装可保留数据；不要先卸载旧版。首次安装时按 Android 提示允许该文件来源安装。
 - iOS：用 Xcode 打开 `ios/App/App.xcodeproj`，在 App → Signing & Capabilities 选择自己的开发团队，连接已信任的 iPhone，选择该设备并运行。真机安装需要 Apple 签名与对应设备的 provisioning profile；未签名的 `.app` 不能直接装到 iPhone。
 - 原浏览器账本与安装版是两个独立存储空间。先在原版本导出 `.zhb` 加密备份，在安装版“数据备份”中填写原备份口令，选择文件、预览并确认恢复。API/S3 凭据和设备锁不会随账本备份迁移，需重新设置。
 

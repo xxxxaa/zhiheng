@@ -36,6 +36,7 @@ export function ApkDownloadPanel({release}:{release:AppRelease|null}){
     {needsPermission&&<button className="secondary" disabled={busy} onClick={()=>void action(()=>updater.openInstallSettings())}>前往系统允许安装更新</button>}
     <p className="muted">安装包保存在 App 内，无需去“下载”目录寻找。只有完整下载并通过大小、SHA-256、版本与签名校验后，才可安装。安装仍由系统确认，请保留账本备份并直接覆盖安装。</p>
     <p className="muted">15 秒无网络响应会报错，总下载时间上限 3 分钟。离开此页面可以继续下载；系统终止 App 后需重试，已校验的安装包可在重启后继续安装。</p>
-    {release&&<details><summary>下载失败时的其他方式</summary><div className="button-row"><a className="text-button" href={release.downloadUrl} target="_blank" rel="noreferrer">浏览器下载 APK</a>{release.versionCode>=6&&<a className="text-button" href={release.downloadUrl.replace(/\.apk$/,'.zip')} target="_blank" rel="noreferrer">备用 ZIP 安装包</a>}</div><p className="muted">浏览器可能未能保存下载文件。可尝试 ZIP，下载后解压并打开其中的 APK；浏览器下载的文件不由 App 校验。</p></details>}
+    {release&&release.versionCode>=6&&<div className="download-fallback"><a className="secondary" href={release.downloadUrl.replace(/\.apk$/,'.zip')} target="_blank" rel="noreferrer"><Download size={16}/>下载 ZIP 安装包（备用）</a><p className="muted">浏览器显示已下载全部大小却一直不结束时，请取消该次下载，改用 ZIP。下载后在文件管理器解压，打开其中的 APK 覆盖安装，无需卸载知衡。</p></div>}
+    {release&&<details><summary>直接下载 APK</summary><a className="text-button" href={release.downloadUrl} target="_blank" rel="noreferrer">使用浏览器下载 APK</a><p className="muted">部分浏览器会卡在 APK 下载收尾。优先使用 App 内下载，或上方 ZIP 安装包；浏览器下载的文件不由 App 校验。</p></details>}
   </div>;
 }

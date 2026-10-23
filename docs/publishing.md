@@ -10,15 +10,15 @@
 
 安装由 Android 系统确认。Android 8+ 首次可能需要用户在系统设置中允许知衡发起安装；App 不会绕过此授权，也不会静默安装。安装前保存编辑并导出加密备份，直接覆盖安装，不要先卸载。
 
-0.1.4 及更早版本仍依赖浏览器下载，无法自动获得新版下载器。若浏览器卡在 APK 下载收尾，可先下载 Release 中的备用 ZIP，解压后打开其中的同一签名 APK，完成这一次覆盖升级。0.1.5 起发布脚本同时上传 APK、ZIP 与两者的 SHA-256；不使用第三方代理下载源。
+0.1.4 及更早版本仍依赖浏览器下载，无法自动获得新版下载器。若浏览器卡在 APK 下载收尾，可先下载 Release 中的备用 ZIP，解压后打开其中的同一签名 APK，完成这一次覆盖升级。0.1.6 起在更新页直接展示 ZIP 备用按钮，并显示当前安装版本；检查时为静态清单添加时间戳且禁用本地缓存，避免复用旧版本响应。0.1.5 起发布脚本同时上传 APK、ZIP 与两者的 SHA-256；不使用第三方代理下载源。
 
-0.1.0 / 0.1.1 不含更新入口，需先从 Releases 手动安装 0.1.3。0.1.2 的更新检查可能受 GitHub API 匿名限额影响，遇到限流请直接安装 0.1.3。当前包继续使用原测试证书；保留 applicationId `app.zhiheng.assets` 和签名，并递增 versionCode，才能覆盖旧版。不能用其他机器自动生成的 debug.keystore 替代。
+0.1.0 / 0.1.1 不含更新入口，0.1.2 的检查可能受 GitHub API 匿名限额影响；这些旧版都可直接用 0.1.6 ZIP 覆盖升级，无需经过中间版本。当前包继续使用原测试证书；保留 applicationId `app.zhiheng.assets` 和签名，并递增 versionCode，才能覆盖旧版。不能用其他机器自动生成的 debug.keystore 替代。
 
 ## 发布者流程
 
 Node.js 22+、JDK 21、Android SDK platform 36 / Build Tools 36.0.0，以及已登录的 `gh`。设置 JAVA_HOME、ANDROID_HOME；可选 GRADLE_BIN 指向已有 Gradle 8.14.3，否则使用已固定 SHA-256 的 Wrapper。
 
-1. `cd web && npm run version:android -- 0.1.6 7` 更新版本，补充对应版本发布说明。
+1. `cd web && npm run version:android -- 0.1.7 8` 更新版本，补充对应版本发布说明，并更新 README 中的 ZIP 下载入口。
 2. 提交源码。CI 运行测试和 Android Release 编译，不持有签名私钥，也不发布随机 debug 签名的安装包。
 3. 在原发布机器保留 `.mobile-tools/signing/zhiheng-compat.keystore`，或通过 ANDROID_SIGNING_KEYSTORE 指定私钥文件。密码和 alias 可用 ANDROID_SIGNING_STORE_PASSWORD、ANDROID_SIGNING_KEY_PASSWORD、ANDROID_SIGNING_ALIAS 提供；兼容现有测试密钥的默认值为 android / androiddebugkey。此默认口令不意味着私钥文件可以公开。
 4. `npm run release:android` 运行前端与 Android 下载引擎测试、构建 release、zipalign、签名并验证包名、版本、证书指纹，输出 APK、备用 ZIP、SHA256SUMS 与发布说明到 artifacts。

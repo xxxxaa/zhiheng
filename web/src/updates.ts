@@ -67,7 +67,9 @@ export async function fetchRelease(): Promise<AppRelease | null> {
   const timer = setTimeout(() => controller.abort(new Error('检查更新超时，请稍后重试')), 20000);
   try {
     // Public static metadata avoids GitHub REST's shared-IP anonymous rate limit.
-    let response = await serviceFetch(UPDATE_MANIFEST, {signal:controller.signal,credentials:'omit',headers:{Accept:'application/json','Cache-Control':'no-cache'}});
+    const manifestUrl = new URL(UPDATE_MANIFEST);
+    manifestUrl.searchParams.set('ts', String(Date.now()));
+    let response = await serviceFetch(manifestUrl.href, {signal:controller.signal,credentials:'omit',cache:'no-store',headers:{Accept:'application/json','Cache-Control':'no-cache'}});
     if(response.status===404)response=await serviceFetch(UPDATE_API,{signal:controller.signal,credentials:'omit',headers:{Accept:'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}});
     if (response.status === 404) return null;
     if (response.status === 403 || response.status === 429) throw new Error('GitHub 暂时限制请求，请稍后重试或打开发布页');

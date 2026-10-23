@@ -48,6 +48,6 @@ export function health(positions:Position[],profile:Profile){const m=metrics(pos
   {title:'应急资金',value:m.months===null?'待补充支出':`${m.months.toFixed(1)} 个月`,state:m.months===null?'unknown':m.months<6?'attention':'good',description:m.months===null?'设置每月必要支出后，计算现金与货币基金的覆盖月数。':'按现金与货币基金计算，6 个月是可调整的规划参考；定期存款未计入。'},
   {title:'持仓集中度',value:`${m.largestRatio.toFixed(1)}%`,state:m.largestRatio>20?'attention':'good',description:'同代码的股票 / 基金跨账户合并。20% 为检查提醒线，未穿透基金底层持仓；无代码记录无法合并。'},
   {title:'权益配置',value:`${m.equityRatio.toFixed(1)}%`,state:m.unknown.gt(0)?'unknown':Math.abs(m.equityRatio-profile.targetEquity)>10?'attention':'good',description:`你的目标为 ${profile.targetEquity}%。混合与未分类基金占 ${m.unknownRatio.toFixed(1)}%，未计入权益。`},
-  {title:'数据新鲜度',value:m.stale?`${m.stale} 项待更新`:'7 天内已更新',state:m.stale?'attention':'good',description:'日期来自手工资产快照，不代表已自动获取行情。超过 7 天提醒复核。'}
+  {title:'数据新鲜度',value:m.stale?`${m.stale} 项待更新`:'7 天内已更新',state:m.stale?'attention':'good',description:'日期来自各项资产的估值日期。已更新股票采用行情截至日期，其他资产以账本快照为准；超过 7 天提醒复核。'}
 ];}
 export function makeBundle(accounts:Account[],positions:Position[],profile:Profile,snapshots:Snapshot[]=[],reports:Report[]=[]):Bundle{return bundleSchema.parse({format:'zhiheng-data',version:1,exportedAt:new Date().toISOString(),accounts,positions,profile,snapshots,reports});}
