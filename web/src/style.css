@@ -22,3 +22,16 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 
 .update-notice{display:flex;align-items:center;justify-content:space-between;gap:12px;background:#eaf0df;border:1px solid #dce5d0;border-radius:10px;padding:12px 16px;margin-bottom:20px;font-size:12px}.update-details{border-top:1px solid var(--line);padding-top:16px;margin-top:16px}.update-details .primary{text-decoration:none;display:inline-flex;align-items:center;gap:8px}.update-details pre{white-space:pre-wrap;font-family:inherit;max-height:220px;font-size:12px}.update-details details{margin:12px 0;font-size:12px}
 .apk-download{margin:18px 0;padding-top:18px;border-top:1px solid #e7ebe2}.download-status{padding:14px;background:#f3f6ee;border-radius:10px;margin-bottom:14px}.download-status strong{display:flex;gap:7px;align-items:center}.download-status p{margin:8px 0;overflow-wrap:anywhere}.download-status progress{width:100%;height:9px;accent-color:#355f50}.download-status small{display:block;margin-top:7px;font-variant-numeric:tabular-nums}.apk-download details .button-row{margin-top:10px}
+
+/* Dated provider tables scroll inside their card on narrow phones. */
+.mx-sheet { margin: 24px 0; min-width: 0; }
+.mx-sheet h3 { font-size: 14px; line-height: 1.7; overflow-wrap: anywhere; }
+.mx-table-scroll { overflow-x: auto; max-width: 100%; border: 1px solid var(--line, #e4e8e1); border-radius: 10px; }
+.mx-table-scroll table { min-width: 420px; width: 100%; border-collapse: collapse; font-size: 12px; }
+.mx-table-scroll th, .mx-table-scroll td { text-align: left; padding: 10px 12px; white-space: nowrap; border-bottom: 1px solid var(--line, #e4e8e1); }
+.mx-table-scroll thead { background: #f2f5ef; }
+.mx-table-scroll tbody th { font-weight: 500; }
+.mx-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 500px; overflow: auto; }
+.mx-attachment { margin-bottom: 14px; }
+.mx-attachment p { margin: 8px 0; }
+.mx-attachment small { display: block; }

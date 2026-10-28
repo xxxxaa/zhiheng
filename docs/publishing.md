@@ -18,7 +18,7 @@
 
 Node.js 22+、JDK 21、Android SDK platform 36 / Build Tools 36.0.0，以及已登录的 `gh`。设置 JAVA_HOME、ANDROID_HOME；可选 GRADLE_BIN 指向已有 Gradle 8.14.3，否则使用已固定 SHA-256 的 Wrapper。
 
-1. `cd web && npm run version:android -- 0.1.7 8` 更新版本，补充对应版本发布说明，并更新 README 中的 ZIP 下载入口。
+1. `cd web && npm run version:android -- 0.1.8 9` 更新版本，补充对应版本发布说明，并更新 README 中的 ZIP 下载入口。
 2. 提交源码。CI 运行测试和 Android Release 编译，不持有签名私钥，也不发布随机 debug 签名的安装包。
 3. 在原发布机器保留 `.mobile-tools/signing/zhiheng-compat.keystore`，或通过 ANDROID_SIGNING_KEYSTORE 指定私钥文件。密码和 alias 可用 ANDROID_SIGNING_STORE_PASSWORD、ANDROID_SIGNING_KEY_PASSWORD、ANDROID_SIGNING_ALIAS 提供；兼容现有测试密钥的默认值为 android / androiddebugkey。此默认口令不意味着私钥文件可以公开。
 4. `npm run release:android` 运行前端与 Android 下载引擎测试、构建 release、zipalign、签名并验证包名、版本、证书指纹，输出 APK、备用 ZIP、SHA256SUMS 与发布说明到 artifacts。

@@ -2,7 +2,7 @@
 
 本地优先的个人资产管理 App。用一个账本整理银行卡、支付宝、微信钱包、东方财富中的现金、存款、基金、股票与负债，查看资产健康指标，并连接自己的模型与加密存储。
 
-**[下载 Android 0.1.6 ZIP 安装包](https://github.com/xxxxaa/zhiheng/releases/download/v0.1.6/zhiheng-0.1.6-android.zip)** · [发布页与 APK](https://github.com/xxxxaa/zhiheng/releases/latest) · [源码](https://github.com/xxxxaa/zhiheng) · [发布与升级](docs/publishing.md) · [手机构建](web/docs/mobile.md)
+**[下载 Android 0.1.7 ZIP 安装包](https://github.com/xxxxaa/zhiheng/releases/download/v0.1.7/zhiheng-0.1.7-android.zip)** · [发布页与 APK](https://github.com/xxxxaa/zhiheng/releases/latest) · [源码](https://github.com/xxxxaa/zhiheng) · [发布与升级](docs/publishing.md) · [手机构建](web/docs/mobile.md)
 
 ## 使用
 
@@ -17,6 +17,7 @@
 
 - 多账户与持仓管理、十进制金额核算、CSV 预览与去重、按日资产快照。
 - 东方财富延迟行情估值：支持沪深北 A 股，手动更新或打开并解锁时每 60 秒自动更新单价、市值与盈亏；不连接交易账户。
+- 妙想 MCP 市场资料：A 股、港美股、基金、债券、公告、研报与宏观数据；查看带日期的查询结果，选择附到 AI 分析，密钥可本机加密保存。
 - 资产配置、应急资金与集中度等确定性指标；DeepSeek 模型下拉选择、刷新可用列表与思考强度设置；保留自定义 AI 模型接口，独立 DeepSeek Search / Fetch。
 - 系统设备验证，重启或离开超过一分钟后重新锁定。
 - AES-GCM 加密备份、本地文件恢复；S3 定时备份在 App 打开且连接已解锁时运行，错过的任务下次补做。
@@ -59,3 +60,15 @@ iOS 工程保留，签名和设备安装需自行配置；当前主要验收平�
 使用 `push2delay.eastmoney.com` 的公开延迟行情；接口不是本项目控制的服务，可能延迟、限流或变更。仅发送股票代码，不发送持有数量、成本、金额或账户名称。每条报价按服务返回精度还原单价，保留真实报价时间，不把请求时间当作交易时间。无效、未来时间或旧于账本估值日期的报价不覆盖原值；失败保留原估值。
 
 仅更新单价和行情截至日期，持有数量与成本仍由你确认。更新结果使用 decimal.js 汇总总资产、净资产和浮动盈亏，并与当日资产快照原子保存。查询期间编辑、删除、恢复或锁定时，不覆盖已变更的资产；恢复账本会清除旧的行情来源标记。行情偏好与来源元数据不进入账本备份。
+
+## 妙想金融数据
+
+在「偏好与连接 → 妙想金融数据」填写自己的 API Key，点击「验证妙想连接」。在「市场资料」选择查询类型，写明证券代码、指标和时间范围，查询后可选择「用于 AI 分析」。DeepSeek 仍使用原有模型连接；先确认发送范围，再将所选查询资料发送给模型。没有模型 Key 时仍可独立查询妙想数据。
+
+App 连接固定官方地址 `https://mxapi.eastmoney.com/mxds/mcp`，使用 `em_api_key` 请求头完成 Streamable HTTP MCP 握手、工具发现与调用。Android 使用现有原生 HTTPS 连接；浏览器预览受供应商 CORS 策略限制。查询 90 秒超时，可取消；原生连接取消后忽略迟到结果，已发出的请求可能仍消耗额度。
+
+妙想仅接收手动输入的查询词，不自动发送账户、持股数量或账本。表格中的数据日期与查询时间分别保留，资料不会自动覆盖估值。服务返回的网页来源可核对，缺失来源、响应截取和查询错误会明确提示。
+
+Key 默认仅保留在当前会话，可使用既有密钥库口令加密保存；旧密钥库兼容，账本备份不包含任何 API Key。项目开发联调可在被 Git 忽略的 `.env.mx.local` 保存 `EM_API_KEY`，该文件仅由本地联调脚本读取，不能改为 `VITE_*` 或导入前端；公开源码和 APK 均不预置密钥。
+
+接入依据：[妙想 MCP 官方安装文档](https://mxapi.eastmoney.com/mxds/doc/mcp-install.md)。
