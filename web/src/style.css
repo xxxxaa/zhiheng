@@ -32,6 +32,8 @@ body{padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-i
 .mx-table-scroll thead { background: #f2f5ef; }
 .mx-table-scroll tbody th { font-weight: 500; }
 .mx-text { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 500px; overflow: auto; }
-.mx-attachment { margin-bottom: 14px; }
+.mx-attachment { display: block; margin-bottom: 14px; background: #eef4e9; color: #355f50; }
+.mx-attachment strong { display: block; }
+.mx-attachment .text-button { margin-top: 10px; }
 .mx-attachment p { margin: 8px 0; }
 .mx-attachment small { display: block; }
