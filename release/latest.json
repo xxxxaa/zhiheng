@@ -1,17 +1,17 @@
 {
-  "tag_name": "v0.1.5",
-  "html_url": "https://github.com/xxxxaa/zhiheng/releases/tag/v0.1.5",
-  "body": "# 知衡 0.1.5\n\n- 更新改为 App 内原生下载，显示实际进度与字节数，支持取消和重试。\n- 连接/传输 15 秒无响应会明确报错，总下载时限 3 分钟，避免无限等待。\n- 下载完成后校验大小、SHA-256、应用身份、版本和签名；通过后才显示“安装更新”。\n- 已校验安装包保存在 App 内，重启后可继续安装，无需寻找浏览器下载文件。\n- Android 系统确认覆盖安装，首次可能需要允许知衡发起安装；保留账本、模型设置与设备锁。\n- 提供备用 ZIP，内容为同一签名的 APK，便于旧版绕过浏览器 APK 下载收尾问题。\n\n**从旧版升级这一次：** 如果 APK 下载卡住，请下载 `zhiheng-0.1.5-android.zip`，解压后打开其中的 APK 覆盖安装，不要先卸载。以后可直接在知衡“偏好与连接 → 应用更新”中下载并安装。\n\n<!-- zhiheng-update:v1\n{\"schema\":1,\"appId\":\"app.zhiheng.assets\",\"version\":\"0.1.5\",\"versionCode\":6,\"minSdk\":24,\"asset\":\"zhiheng-0.1.5-android.apk\",\"sha256\":\"2c1b2aad2296fd2252e80252010a14f408556aba0c3b4b3b332264963e996290\",\"signerSha256\":\"0fb97ee5bf50a79946ee75f337bcc42b5f29471174473dd8c63718e459f0fa2b\"}\n-->\n",
+  "tag_name": "v0.1.7",
+  "html_url": "https://github.com/xxxxaa/zhiheng/releases/tag/v0.1.7",
+  "body": "# 知衡 0.1.7\n\n- 新增「市场资料」：接入东方财富妙想 MCP，可查询 A 股、港美股、基金、债券、指数、宏观、公告、新闻及筛选数据。\n- 查询结果保留数据日期与单位，以表格展示；可选择「用于 AI 分析」，将本次资料交给已配置的 DeepSeek 或其他模型。\n- 在「偏好与连接」填写自己的妙想 API Key，可验证连接，并随模型和搜索密钥一起加密保存在本机。兼容已有密钥库。\n- 仅向妙想发送你输入的查询词，不自动上传账本。自然语言查询不直接覆盖持仓估值，现有 A 股延迟行情估值功能保持独立。\n- 查询支持取消、90 秒超时和错误提示；资料缺少网页来源或被截取时明确说明。\n\n直接覆盖安装，无需卸载旧版。安装包不包含任何用户的妙想 Key，需在 App 内自行填写。\n\n<!-- zhiheng-update:v1\n{\"schema\":1,\"appId\":\"app.zhiheng.assets\",\"version\":\"0.1.7\",\"versionCode\":8,\"minSdk\":24,\"asset\":\"zhiheng-0.1.7-android.apk\",\"sha256\":\"d1a619dfc3861f24050cc4c28b5dbfdc1ec854d02e5d6962b28e7794e38ffbed\",\"signerSha256\":\"0fb97ee5bf50a79946ee75f337bcc42b5f29471174473dd8c63718e459f0fa2b\"}\n-->\n",
   "draft": false,
   "prerelease": false,
-  "published_at": "2026-10-21T13:27:37Z",
+  "published_at": "2026-10-28T10:52:59Z",
   "assets": [
     {
-      "name": "zhiheng-0.1.5-android.apk",
-      "browser_download_url": "https://github.com/xxxxaa/zhiheng/releases/download/v0.1.5/zhiheng-0.1.5-android.apk",
+      "name": "zhiheng-0.1.7-android.apk",
+      "browser_download_url": "https://github.com/xxxxaa/zhiheng/releases/download/v0.1.7/zhiheng-0.1.7-android.apk",
       "state": "uploaded",
-      "size": 6133204,
-      "digest": "sha256:2c1b2aad2296fd2252e80252010a14f408556aba0c3b4b3b332264963e996290"
+      "size": 6141396,
+      "digest": "sha256:d1a619dfc3861f24050cc4c28b5dbfdc1ec854d02e5d6962b28e7794e38ffbed"
     }
   ]
 }
