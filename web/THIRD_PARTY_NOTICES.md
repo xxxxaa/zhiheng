@@ -106,7 +106,8 @@ Full license texts are included below and under licenses/. No Wealthfolio or ezB
 | unist-util-visit-parents | 6.0.2 | MIT |
 | vfile | 6.0.3 | MIT |
 | vfile-message | 4.0.3 | MIT |
-| zod | 3.25.76 | MIT |
+| xlsx | 0.20.3 | Apache-2.0 |
+| zod | 4.6.7 | MIT |
 | zwitch | 2.0.4 | MIT |
 
 # Native dependency notices

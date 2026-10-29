@@ -4,7 +4,7 @@ export const template='账户,名称,类型,代码,数量,单价,总成本,数�
 export function parsePositions(text:string,accounts:Account[],existing:Position[]){
   const parsed=Papa.parse<Record<string,string>>(text.replace(/^\uFEFF/,''),{header:true,skipEmptyLines:'greedy',transformHeader:h=>h.trim(),transform:v=>v.trim()});
   if(parsed.errors.length)throw new Error(`CSV 格式错误：${parsed.errors[0].message}`);
-  if(!parsed.meta.fields?.includes('账户')||!parsed.meta.fields.includes('名称'))throw new Error('请选择知衡持仓模板 CSV。支付宝 / 微信原始账单尚不支持直接导入。');
+  if(!parsed.meta.fields?.includes('账户')||!parsed.meta.fields.includes('名称'))throw new Error('请选择知衡持仓模板 CSV。支付宝 / 微信交易账单请到“账单与流水”导入。');
   if(parsed.data.length>10000)throw new Error('一次最多导入 10,000 项');
   const positions:Position[]=[],errors:string[]=[],duplicates:string[]=[];
   const fingerprint=(p:Position)=>JSON.stringify([p.accountId,p.name,p.kind,p.code,p.quantity,p.price,p.cost,p.asOf,p.fundType,p.maturity,p.rate]);

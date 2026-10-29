@@ -1,8 +1,8 @@
 {
   "repository": "xxxxaa/zhiheng",
   "appId": "app.zhiheng.assets",
-  "version": "0.1.7",
-  "versionCode": 8,
+  "version": "0.1.8",
+  "versionCode": 9,
   "minSdk": 24,
   "signerSha256": "0fb97ee5bf50a79946ee75f337bcc42b5f29471174473dd8c63718e459f0fa2b"
 }

@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import Decimal from 'decimal.js';
+import {statementSchema,statementBatchSchema,type Statement,type StatementBatch} from './statement-model';
 
 export const kinds = { cash:'现金 / 活期', deposit:'定期存款', fund:'基金', stock:'股票', debt:'负债' } as const;
 export const platforms = ['银行卡','支付宝','微信钱包','东方财富','其他'] as const;
@@ -15,12 +16,19 @@ export const positionSchema = z.object({
 export const profileSchema=z.object({expense:decimal,targetEquity:z.number().min(0).max(100),risk:z.enum(['稳健','均衡','进取']),horizon:z.enum(['1 年内','1–3 年','3–5 年','5 年以上'])}).strict();
 export const snapshotSchema=z.object({date,assets:decimal,debt:decimal,net:z.string().regex(/^-?\d+(\.\d+)?$/)}).strict();
 export const reportSchema=z.object({id,createdAt:z.string().datetime(),question:z.string().max(2000),model:z.string().max(100),text:z.string().max(100000),sources:z.array(z.object({url:z.string().url(),title:z.string()})).max(100),demo:z.boolean()});
-export const bundleSchema=z.object({format:z.literal('zhiheng-data'),version:z.literal(1),exportedAt:z.string().datetime(),accounts:z.array(accountSchema).max(500),positions:z.array(positionSchema).max(10000),profile:profileSchema,snapshots:z.array(snapshotSchema).max(10000),reports:z.array(reportSchema)}).strict().superRefine((b,ctx)=>{
-  for(const arr of [b.accounts,b.positions,b.reports]) if(new Set(arr.map(x=>x.id)).size!==arr.length) ctx.addIssue({code:'custom',message:'备份中存在重复 ID'});
+const bundleFields={format:z.literal('zhiheng-data'),exportedAt:z.string().datetime(),accounts:z.array(accountSchema).max(500),positions:z.array(positionSchema).max(10000),profile:profileSchema,snapshots:z.array(snapshotSchema).max(10000),reports:z.array(reportSchema)};
+const legacyBundle=z.object({...bundleFields,version:z.literal(1)}).strict();
+const currentBundle=z.object({...bundleFields,version:z.literal(2),statements:z.array(statementSchema).max(50000),statementBatches:z.array(statementBatchSchema).max(2000)}).strict();
+export const bundleSchema=z.union([currentBundle,legacyBundle.transform(b=>({...b,version:2 as const,statements:[] as Statement[],statementBatches:[] as StatementBatch[]}))]).superRefine((b,ctx)=>{
+  for(const arr of [b.accounts,b.positions,b.reports,b.statements,b.statementBatches]) if(new Set(arr.map(x=>x.id)).size!==arr.length) ctx.addIssue({code:'custom',message:'备份中存在重复 ID'});
   const accounts=new Set(b.accounts.map(a=>a.id));
   if(b.positions.some(p=>!accounts.has(p.accountId))) ctx.addIssue({code:'custom',message:'持仓缺少关联账户'});
+  const batches=new Map(b.statementBatches.map(batch=>[batch.id,batch]));
+  const orderKeys=b.statements.filter(r=>r.sourceId).map(r=>JSON.stringify([r.accountId,r.source,r.sourceId]));
+  if(new Set(orderKeys).size!==orderKeys.length)ctx.addIssue({code:'custom',message:'备份中存在重复流水订单号'});
+  if(b.statementBatches.some(batch=>!accounts.has(batch.accountId))||b.statements.some(row=>{const batch=batches.get(row.batchId);return !accounts.has(row.accountId)||!batch||batch.accountId!==row.accountId||batch.source!==row.source;}))ctx.addIssue({code:'custom',message:'流水缺少有效关联账户或导入批次'});
   if(new Set(b.snapshots.map(s=>s.date)).size!==b.snapshots.length) ctx.addIssue({code:'custom',message:'快照日期重复'});
-  if(b.positions.some(p=>p.asOf>localDay())) ctx.addIssue({code:'custom',message:'数据日期不能晚于今天'});
+  if(b.positions.some(p=>p.asOf>localDay())||b.statements.some(s=>s.time.slice(0,10)>localDay())) ctx.addIssue({code:'custom',message:'数据日期不能晚于今天'});
 });
 export type Account=z.infer<typeof accountSchema>;
 export type Position=z.infer<typeof positionSchema>;
@@ -50,4 +58,4 @@ export function health(positions:Position[],profile:Profile){const m=metrics(pos
   {title:'权益配置',value:`${m.equityRatio.toFixed(1)}%`,state:m.unknown.gt(0)?'unknown':Math.abs(m.equityRatio-profile.targetEquity)>10?'attention':'good',description:`你的目标为 ${profile.targetEquity}%。混合与未分类基金占 ${m.unknownRatio.toFixed(1)}%，未计入权益。`},
   {title:'数据新鲜度',value:m.stale?`${m.stale} 项待更新`:'7 天内已更新',state:m.stale?'attention':'good',description:'日期来自各项资产的估值日期。已更新股票采用行情截至日期，其他资产以账本快照为准；超过 7 天提醒复核。'}
 ];}
-export function makeBundle(accounts:Account[],positions:Position[],profile:Profile,snapshots:Snapshot[]=[],reports:Report[]=[]):Bundle{return bundleSchema.parse({format:'zhiheng-data',version:1,exportedAt:new Date().toISOString(),accounts,positions,profile,snapshots,reports});}
+export function makeBundle(accounts:Account[],positions:Position[],profile:Profile,snapshots:Snapshot[]=[],reports:Report[]=[],statements:Statement[]=[],statementBatches:StatementBatch[]=[]):Bundle{return bundleSchema.parse({format:'zhiheng-data',version:2,exportedAt:new Date().toISOString(),accounts,positions,profile,snapshots,reports,statements,statementBatches});}

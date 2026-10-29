@@ -20,7 +20,7 @@ export type MxTool = typeof MX_TOOLS[number]['name'];
 export type MxTable = {title:string;columns:string[];rows:string[][]};
 export type MxResult = {id:string;query:string;tool:MxTool;retrievedAt:string;text:string;tables:MxTable[];sources:{url:string;title:string}[];warnings:string[]};
 const MAX_RESPONSE = 2_000_000;
-const toolList = z.object({tools:z.array(z.object({name:z.string(),inputSchema:z.object({type:z.literal('object'),properties:z.record(z.unknown()),required:z.array(z.string()).optional()})})).max(200),nextCursor:z.string().optional()});
+const toolList = z.object({tools:z.array(z.object({name:z.string(),inputSchema:z.object({type:z.literal('object'),properties:z.record(z.string(),z.unknown()),required:z.array(z.string()).optional()})})).max(200),nextCursor:z.string().optional()});
 const object = (x:unknown):x is Record<string,unknown> => typeof x === 'object' && x !== null && !Array.isArray(x);
 
 function envelope(value:unknown,id:number) {

@@ -2,7 +2,7 @@
 
 本地优先的个人资产管理 App。用一个账本整理银行卡、支付宝、微信钱包、东方财富中的现金、存款、基金、股票与负债，查看资产健康指标，并连接自己的模型与加密存储。
 
-**[下载 Android 0.1.7 ZIP 安装包](https://github.com/xxxxaa/zhiheng/releases/download/v0.1.7/zhiheng-0.1.7-android.zip)** · [发布页与 APK](https://github.com/xxxxaa/zhiheng/releases/latest) · [源码](https://github.com/xxxxaa/zhiheng) · [发布与升级](docs/publishing.md) · [手机构建](web/docs/mobile.md)
+**[下载 Android 0.1.8 ZIP 安装包](https://github.com/xxxxaa/zhiheng/releases/download/v0.1.8/zhiheng-0.1.8-android.zip)** · [发布页与 APK](https://github.com/xxxxaa/zhiheng/releases/latest) · [源码](https://github.com/xxxxaa/zhiheng) · [发布与升级](docs/publishing.md) · [手机构建](web/docs/mobile.md)
 
 ## 使用
 
@@ -16,6 +16,7 @@
 ## 功能与边界
 
 - 多账户与持仓管理、十进制金额核算、CSV 预览与去重、按日资产快照。
+- 手机账单与流水：CSV / XLSX 本地解析，支付宝 / 微信常见表头识别，银行表格列映射；预览、重复订单检查、逐笔核对、批次移除与加密备份。原平台导出仍需用户操作，不是账户直连。
 - 东方财富延迟行情估值：支持沪深北 A 股，手动更新或打开并解锁时每 60 秒自动更新单价、市值与盈亏；不连接交易账户。
 - 妙想 MCP 市场资料：A 股、港美股、基金、债券、公告、研报与宏观数据；查看带日期的查询结果，选择附到 AI 分析，密钥可本机加密保存。
 - 资产配置、应急资金与集中度等确定性指标；DeepSeek 模型下拉选择、刷新可用列表与思考强度设置；保留自定义 AI 模型接口，独立 DeepSeek Search / Fetch。
@@ -72,3 +73,13 @@ App 连接固定官方地址 `https://mxapi.eastmoney.com/mxds/mcp`，使用 `em
 Key 默认仅保留在当前会话，可使用既有密钥库口令加密保存；旧密钥库兼容，账本备份不包含任何 API Key。项目开发联调可在被 Git 忽略的 `.env.mx.local` 保存 `EM_API_KEY`，该文件仅由本地联调脚本读取，不能改为 `VITE_*` 或导入前端；公开源码和 APK 均不预置密钥。
 
 接入依据：[妙想 MCP 官方安装文档](https://mxapi.eastmoney.com/mxds/doc/mcp-install.md)。
+
+## 手机账单与流水（0.1.8）
+
+在原平台导出账单后，打开「账单与流水」选择文件、来源和归属账户，核对日期/金额/方向等列，点击「解析并预览」，确认后保存到待核对列表。支付宝和微信按常见 CSV/XLSX 表头识别；银行表格支持带正负号金额或收入/支出分列，招商和平安的具体导出模板仍需实际样本验证。
+
+文件最大 5 MB、单次 5,000 笔，仅支持人民币。ZIP 先解压，旧 XLS 转存 XLSX；PDF、截图和手机通知采集暂未支持。解析在独立本机 Worker 中进行，超时可取消，不上传原始账单。所有流水先待核对；无编号的同额记录不自动删除，同号但内容变化会阻止导入并提示先核对旧批次。交易流水不会自动改写余额，也不直接叠加到总资产。
+
+东方财富持股数量、成本和账户现金继续通过手工或标准持仓模板校准，公开行情只更新支持股票的价格；手机端尚未获得券商账户授权接口。
+
+0.1.8 的账本备份格式升级为 v2，包含流水、核对状态和导入批次；可读取旧 v1 备份，旧版 App 无法读取新的 v2 备份。恢复会替换全部账本，可撤销至恢复前快照。
