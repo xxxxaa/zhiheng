@@ -1,17 +1,17 @@
 {
-  "tag_name": "v0.1.7",
-  "html_url": "https://github.com/xxxxaa/zhiheng/releases/tag/v0.1.7",
-  "body": "# 知衡 0.1.7\n\n- 新增「市场资料」：接入东方财富妙想 MCP，可查询 A 股、港美股、基金、债券、指数、宏观、公告、新闻及筛选数据。\n- 查询结果保留数据日期与单位，以表格展示；可选择「用于 AI 分析」，将本次资料交给已配置的 DeepSeek 或其他模型。\n- 在「偏好与连接」填写自己的妙想 API Key，可验证连接，并随模型和搜索密钥一起加密保存在本机。兼容已有密钥库。\n- 仅向妙想发送你输入的查询词，不自动上传账本。自然语言查询不直接覆盖持仓估值，现有 A 股延迟行情估值功能保持独立。\n- 查询支持取消、90 秒超时和错误提示；资料缺少网页来源或被截取时明确说明。\n\n直接覆盖安装，无需卸载旧版。安装包不包含任何用户的妙想 Key，需在 App 内自行填写。\n\n<!-- zhiheng-update:v1\n{\"schema\":1,\"appId\":\"app.zhiheng.assets\",\"version\":\"0.1.7\",\"versionCode\":8,\"minSdk\":24,\"asset\":\"zhiheng-0.1.7-android.apk\",\"sha256\":\"d1a619dfc3861f24050cc4c28b5dbfdc1ec854d02e5d6962b28e7794e38ffbed\",\"signerSha256\":\"0fb97ee5bf50a79946ee75f337bcc42b5f29471174473dd8c63718e459f0fa2b\"}\n-->\n",
+  "tag_name": "v0.1.8",
+  "html_url": "https://github.com/xxxxaa/zhiheng/releases/tag/v0.1.8",
+  "body": "新增“账单与流水”：在安卓手机选择 CSV / XLSX 账单，本地解析、预览后保存，逐笔核对收入、支出、本人账户互转与退款。\n\n- 支付宝、微信按常见账单表头识别；银行表格可选择日期、金额、收支方向等列，支持正负金额和收入/支出分列。银行具体导出模板仍待真实样本验证。\n- 同一文件和相同订单重复导入时跳过；同号订单内容变化时提示冲突。没有订单号的同额交易保留待核对，避免误删。\n- 流水不会自动改变账户余额、持仓或净资产；支付渠道与银行卡重复记录需核对，可标记不计入收支。\n- 新记录先进入待核对列表，支持分类、筛选和按批次移除。\n- 流水、核对状态和导入批次纳入加密文件与云备份。备份格式升级为 v2，可恢复旧 v1 备份；新版备份需要 0.1.8 或更新版本读取。\n- CSV 支持 UTF-8 / GB18030；Excel 解析在独立线程中运行，限制大小并支持超时取消。同步更新数据校验库，修复已知的超大集合内存问题。\n\n这是一版手机账单导入与核对功能，原平台账单仍需用户导出，不是五家账户全自动连接。文件上限 5 MB，单次最多 5,000 笔，仅支持人民币；ZIP 请先解压，XLS 请转存 XLSX。PDF、截图识别和通知采集尚未支持。东方财富持仓数量、成本与账户现金继续通过手工或标准持仓模板校准。\n\n沿用原签名，可直接覆盖升级。升级前请保留加密备份，不要卸载旧版。APK 与备用 ZIP 包含同一安装包。\n\n<!-- zhiheng-update:v1\n{\"schema\":1,\"appId\":\"app.zhiheng.assets\",\"version\":\"0.1.8\",\"versionCode\":9,\"minSdk\":24,\"asset\":\"zhiheng-0.1.8-android.apk\",\"sha256\":\"b90ea1236c0221b54526bd12381e164ae9e405c3dfe508da8201f2b21131afea\",\"signerSha256\":\"0fb97ee5bf50a79946ee75f337bcc42b5f29471174473dd8c63718e459f0fa2b\"}\n-->\n",
   "draft": false,
   "prerelease": false,
-  "published_at": "2026-10-28T10:52:59Z",
+  "published_at": "2026-10-29T02:09:59Z",
   "assets": [
     {
-      "name": "zhiheng-0.1.7-android.apk",
-      "browser_download_url": "https://github.com/xxxxaa/zhiheng/releases/download/v0.1.7/zhiheng-0.1.7-android.apk",
+      "name": "zhiheng-0.1.8-android.apk",
+      "browser_download_url": "https://github.com/xxxxaa/zhiheng/releases/download/v0.1.8/zhiheng-0.1.8-android.apk",
       "state": "uploaded",
-      "size": 6141396,
-      "digest": "sha256:d1a619dfc3861f24050cc4c28b5dbfdc1ec854d02e5d6962b28e7794e38ffbed"
+      "size": 6297139,
+      "digest": "sha256:b90ea1236c0221b54526bd12381e164ae9e405c3dfe508da8201f2b21131afea"
     }
   ]
 }
